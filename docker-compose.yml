@@ -124,17 +124,17 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  haproxy:
-    build: ./apps/haproxy
-    container_name: "${PROJECT_NAME}_haproxy"
-    restart: always
-#    command:
-    networks:
-      - incoming
-    ports:
-      - '7070:80'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+#  haproxy:
+#    build: ./apps/haproxy
+#    container_name: "${PROJECT_NAME}_haproxy"
+#    restart: always
+##    command:
+#    networks:
+#      - incoming
+#    ports:
+#      - '7070:80'
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   orchestration:
@@ -146,9 +146,9 @@ networks:
   blood_ca_d8:
     external:
       name: v8_default
-  incoming:
-    driver: bridge
-    attachable: true
+#  incoming:
+#    driver: bridge
+#    attachable: true
 #volumes:
 ## Docker-sync for macOS users
 #  docker-sync:
