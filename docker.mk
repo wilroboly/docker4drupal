@@ -1,10 +1,8 @@
 include .env
 
-.PHONY: up down stop prune ps shell drush logs
+.PHONY: up down stop prune ps shell rshell drush logs
 
 default: up
-
-DRUPAL_ROOT ?= /var/www/html/web
 
 up:
 	@echo "Starting up containers for $(PROJECT_NAME)..."
@@ -25,10 +23,10 @@ ps:
 	@docker ps --filter name='$(PROJECT_NAME)*'
 
 shell:
-	docker exec -ti -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") sh
+	docker exec -ti -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_haproxy' --format "{{ .ID }}") sh
 
-drush:
-	docker exec $(shell docker ps --filter name='$(PROJECT_NAME)_php' --format "{{ .ID }}") drush -r $(DRUPAL_ROOT) $(filter-out $@,$(MAKECMDGOALS))
+rshell: # Root Shell
+	docker exec -u 0 -ti -e COLUMNS=$(shell tput cols) -e LINES=$(shell tput lines) $(shell docker ps --filter name='$(PROJECT_NAME)_haproxy' --format "{{ .ID }}") bash
 
 logs:
 	@docker-compose logs -f $(filter-out $@,$(MAKECMDGOALS))
