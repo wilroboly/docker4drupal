@@ -22,7 +22,7 @@ DB_URL="${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}"
 
 make init -f /usr/local/bin/actions.mk
 
-composer require \
+composer require -n \
     drupal/redis \
     drupal/search_api \
     drupal/search_api_solr \
@@ -35,7 +35,7 @@ cd ./web
 drush si -y --db-url="${DB_URL}"
 
 # Test Drupal status and requirements
-check_status "drush-version" "9.*"
+check_status "drush-version" "10.*"
 check_status "root" "${APP_ROOT}/${DOCROOT_SUBDIR}"
 check_status "site" "sites/default"
 check_status "files" "sites/default/files"
@@ -67,9 +67,8 @@ check_rq "Redis" "Connected, using the <em>PhpRedis</em> client"
 check_rq "Trusted Host Settings" "Enabled"
 
 # Import solr server
-drupal cis --file search_api.server.solr_6_4.yml
+drupal cis --file search_api.server.solr.yml --directory /var/www/html/web
 check_rq "Solr servers" "1 server"
-check_rq "Solr server indexes" "1 server"
 
 # @TODO return varnish tests after purge module drush commands support drush 9
 

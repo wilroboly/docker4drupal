@@ -8,17 +8,13 @@ fi
 
 check_rq() {
     echo "Checking requirement: ${1} must be ${2}"
-    # TODO: remove COLUMNS=0 with drush 8.1.17 release
-    # see https://github.com/drush-ops/drush/issues/3410
-    COLUMNS=0 drush rq --format=json | jq ".\"${1}\".value" | grep -q "${2}"
+    drush rq --format=json | jq ".\"${1}\".value" | grep -q "${2}"
     echo "OK"
 }
 
 check_status() {
     echo "Checking status: ${1} must be ${2}"
-    # TODO: remove COLUMNS=0 with drush 8.1.17 release
-    # see https://github.com/drush-ops/drush/issues/3410
-    COLUMNS=0 drush status --format=yaml | grep -q "${1}: ${2}"
+    drush status --format=yaml | grep -q "${1}: ${2}"
     echo "OK"
 }
 
@@ -26,7 +22,7 @@ DB_URL="${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}"
 
 make init -f /usr/local/bin/actions.mk
 
-composer require \
+composer require -n \
     drupal/redis \
     drupal/search_api \
     drupal/search_api_solr \
@@ -63,10 +59,10 @@ drush en -y feature_search_api_solr
 check_rq "search_api_solr" "1 server"
 
 # Test varnish cache and purge
-curl -Is varnish:6081 | grep -q "X-Varnish-Cache: MISS"
-curl -Is varnish:6081 | grep -q "X-Varnish-Cache: HIT"
+curl -Is varnish:6081 | grep -q "X-VC-Cache: MISS"
+curl -Is varnish:6081 | grep -q "X-VC-Cache: HIT"
 
 drush varnish-purge-all
 
-curl -Is varnish:6081 | grep -q "X-Varnish-Cache: MISS"
-curl -Is varnish:6081 | grep -q "X-Varnish-Cache: HIT"
+curl -Is varnish:6081 | grep -q "X-VC-Cache: MISS"
+curl -Is varnish:6081 | grep -q "X-VC-Cache: HIT"
